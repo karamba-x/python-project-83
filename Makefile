@@ -1,18 +1,11 @@
 install:
-	uv sync
-
-build:
-	./build.sh
+	pip install -r requirements.txt
 
 dev:
-	uv run flask --debug --app page_analyzer:app run
+	flask --debug --app page_analyzer:app run
+
+start:
+	gunicorn -w 4 -b 0.0.0.0:8000 page_analyzer:app
 
 lint:
-	uv run ruff check page_analyzer --fix
-
-PORT ?= 8000
-start:
-	uv run gunicorn -w 5 -b 0.0.0.0:8000 page_analyzer:app
-
-render-start:
-	/opt/render/.local/bin/uv run gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
+	ruff check page_analyzer --fix
