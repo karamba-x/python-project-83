@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Сайты</h1>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover text-nowrap" data-test="urls">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Имя</th>
+      <th>Последняя проверка</th>
+      <th>Код ответа</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for row in list %}
+    <tr>
+      <td>{{ row["id"] }}</td>
+      <td>
+        <a href="{{ url_for('get_url', id=row['id']) }}">
+          {{ row["name"] }}
+        </a>
+      </td>
+      <td></td>
+      <td></td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

@@ -1,14 +1,65 @@
 import os
 
+import psycopg2
+import validators
 from dotenv import load_dotenv
-from flask import Flask, render_template
+from flask import (
+    Flask,
+    flash,
+    get_flashed_messages,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
+from psycopg2.extras import DictCursor
+
+from page_analyzer.dao import UrlDAO
+from page_analyzer.utils import parse_url
 
 load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
+DATABASE_URL = os.getenv('DATABASE_URL')
+conn = psycopg2.connect(DATABASE_URL, cursor_factory=DictCursor)
+dao = UrlDAO(conn)
 
-@app.get("/")
+
+@app.route("/", methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    messages = get_flashed_messages(with_categories=True)
+    if request.method == 'POST':
+        url = request.form.get('url')
+
+        based_url = parse_url(url)
+
+        if not validators.url(url):
+            flash("Некорректный URL", "danger")
+            return redirect(url_for('index'))
+
+        id_returned, is_existed = dao.save(based_url)
+        print(id_returned)
+        if is_existed:
+            flash("Страница уже существует", "info")
+        else:
+            flash("Страница успешно добавлена", "success")
+        return redirect(url_for('get_url', id=id_returned))
+
+    return render_template('index.html', messages=messages)
+
+
+@app.get("/urls/<int:id>")
+def get_url(id):
+    messages = get_flashed_messages(with_categories=True)
+    row = dao.get_by_id(id)
+    if not row:
+        return render_template("not_found.html")
+    return render_template("view.html", messages=messages, row=row)
+
+
+@app.get("/urls")
+def get_url_list():
+    list = dao.get_all()
+    return render_template("list.html", list=list)
 
