@@ -23,7 +23,7 @@
           {{ row["name"] }}
         </a>
       </td>
-      <td></td>
+      <td>{{ row["last_check_date"] or '' }}</td>
       <td></td>
     </tr>
     {% endfor %}

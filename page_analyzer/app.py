@@ -39,7 +39,6 @@ def index():
             return redirect(url_for('index'))
 
         id_returned, is_existed = dao.save(based_url)
-        print(id_returned)
         if is_existed:
             flash("Страница уже существует", "info")
         else:
@@ -53,13 +52,19 @@ def index():
 def get_url(id):
     messages = get_flashed_messages(with_categories=True)
     row = dao.get_by_id(id)
+    url_checks = dao.get_checks_by_url_id(id)
     if not row:
         return render_template("not_found.html")
-    return render_template("view.html", messages=messages, row=row)
+    return render_template("view.html", messages=messages, row=row, url_checks=url_checks)
 
 
 @app.get("/urls")
 def get_url_list():
     list = dao.get_all()
     return render_template("list.html", list=list)
+
+@app.post("/urls/<int:id>/checks")
+def add_check_url(id):
+    dao.create_url_check(id)
+    return redirect(url_for('get_url', id=id))
 
