@@ -13,12 +13,20 @@ on:
       - '**'
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Hexlet project check
-        uses: hexlet/project-action@release
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          hexlet-id: ${{ secrets.HEXLET_ID }}
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          pip install uv
+          make install
+      - name: Run lint
+        run: make lint
