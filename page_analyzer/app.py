@@ -1,7 +1,9 @@
 import os
 
 import psycopg2
+import requests
 import validators
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from flask import (
     Flask,
@@ -16,8 +18,6 @@ from psycopg2.extras import DictCursor
 
 from page_analyzer.dao import UrlDAO
 from page_analyzer.utils import parse_url
-import requests
-from bs4 import BeautifulSoup
 
 load_dotenv()
 app = Flask(__name__)
