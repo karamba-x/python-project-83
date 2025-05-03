@@ -71,6 +71,8 @@ def add_check_url(id):
     row = dao.get_by_id(id)
     try:
         res = requests.get(row["name"])
+        res.raise_for_status()
+
         soup = BeautifulSoup(res.text, "html.parser")
 
         meta_description = soup.find("meta", attrs={"name": "description"})

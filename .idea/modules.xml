@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/hexlet-python-seo.iml" filepath="$PROJECT_DIR$/.idea/hexlet-python-seo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/hexlet_python_seo_uv.iml" filepath="$PROJECT_DIR$/.idea/hexlet_python_seo_uv.iml" />
     </modules>
   </component>
 </project>
