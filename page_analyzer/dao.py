@@ -41,9 +41,12 @@ ORDER BY urls.id DESC;
             """)
             return cur.fetchall()
 
-    def create_url_check(self, url_id, status_code):
+    def create_url_check(self, url_id, status_code, h1, title, description):
         with self.conn.cursor() as cur:
-            cur.execute("INSERT INTO url_checks (url_id, status_code) VALUES (%s, %s);", (url_id, status_code))
+            cur.execute("""
+            INSERT INTO url_checks (url_id, status_code, h1, title, description)
+            VALUES (%s, %s, %s, %s, %s);
+            """, (url_id, status_code, h1, title, description))
             self.conn.commit()
 
     def get_checks_by_url_id(self, url_id):

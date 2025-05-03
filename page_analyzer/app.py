@@ -17,7 +17,7 @@ from psycopg2.extras import DictCursor
 from page_analyzer.dao import UrlDAO
 from page_analyzer.utils import parse_url
 import requests
-
+from bs4 import BeautifulSoup
 
 load_dotenv()
 app = Flask(__name__)
@@ -65,15 +65,25 @@ def get_url_list():
     list = dao.get_all()
     return render_template("list.html", list=list)
 
+
 @app.post("/urls/<int:id>/checks")
 def add_check_url(id):
     row = dao.get_by_id(id)
     try:
         res = requests.get(row["name"])
-        print(type(res.status_code))
-        dao.create_url_check(id, res.status_code)
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        meta_description = soup.find("meta", attrs={"name": "description"})
+        meta_description_content = meta_description.get("content") if meta_description else ""
+
+        h1_tag = soup.find("h1")
+        h1_text = h1_tag.text if h1_tag else ""
+
+        title_tag = soup.title
+        title_text = title_tag.text if title_tag else ""
+
+        dao.create_url_check(id, res.status_code, h1_text, title_text, meta_description_content)
     except requests.exceptions.HTTPError:
         flash("Произошла ошибка при проверке", "danger")
 
     return redirect(url_for('get_url', id=id))
-
