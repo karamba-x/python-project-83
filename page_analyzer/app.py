@@ -16,6 +16,8 @@ from psycopg2.extras import DictCursor
 
 from page_analyzer.dao import UrlDAO
 from page_analyzer.utils import parse_url
+import requests
+
 
 load_dotenv()
 app = Flask(__name__)
@@ -65,6 +67,13 @@ def get_url_list():
 
 @app.post("/urls/<int:id>/checks")
 def add_check_url(id):
-    dao.create_url_check(id)
+    row = dao.get_by_id(id)
+    try:
+        res = requests.get(row["name"])
+        print(type(res.status_code))
+        dao.create_url_check(id, res.status_code)
+    except requests.exceptions.HTTPError:
+        flash("Произошла ошибка при проверке", "danger")
+
     return redirect(url_for('get_url', id=id))
 

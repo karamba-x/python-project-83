@@ -23,24 +23,27 @@ class UrlDAO:
     def get_all(self):
         with self.conn.cursor() as cur:
             cur.execute("""
-                SELECT 
-                    urls.id, 
-                    urls.name, 
-                    MAX(url_checks.created_at) AS last_check_date
-                FROM 
-                    urls
-                LEFT JOIN 
-                    url_checks ON urls.id = url_checks.url_id
-                GROUP BY 
-                    urls.id
-                ORDER BY 
-                    urls.id DESC
+SELECT 
+    urls.id, 
+    urls.name, 
+    uc.status_code,
+    uc.created_at AS last_check_date
+FROM urls
+LEFT JOIN (
+    SELECT DISTINCT ON (url_id)
+        url_id,
+        status_code,
+        created_at
+    FROM url_checks
+    ORDER BY url_id, created_at DESC
+) AS uc ON urls.id = uc.url_id
+ORDER BY urls.id DESC;
             """)
             return cur.fetchall()
 
-    def create_url_check(self, url_id):
+    def create_url_check(self, url_id, status_code):
         with self.conn.cursor() as cur:
-            cur.execute("INSERT INTO url_checks (url_id) VALUES (%s);", (url_id,))
+            cur.execute("INSERT INTO url_checks (url_id, status_code) VALUES (%s, %s);", (url_id, status_code))
             self.conn.commit()
 
     def get_checks_by_url_id(self, url_id):

@@ -24,7 +24,7 @@
         </a>
       </td>
       <td>{{ row["last_check_date"] or '' }}</td>
-      <td></td>
+      <td>{{ row["status_code"] or '' }}</td>
     </tr>
     {% endfor %}
 
