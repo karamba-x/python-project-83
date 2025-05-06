@@ -33,7 +33,7 @@ def index():
 
         based_url = parse_url(url)
 
-        if not validators.url(url):
+        if not validators.url(based_url):
             flash("Некорректный URL", "danger")
             return redirect(url_for('index'))
 
@@ -82,6 +82,7 @@ def add_check_url(id):
         title_text = title_tag.text if title_tag else ""
 
         dao.create_url_check(id, res.status_code, h1_text, title_text, meta_description_content)
+        flash("Страница успешно проверена", "success")
     except requests.exceptions.HTTPError:
         flash("Произошла ошибка при проверке", "danger")
 
