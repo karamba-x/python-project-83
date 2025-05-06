@@ -35,7 +35,7 @@ def index():
 
         if not validators.url(based_url):
             flash("Некорректный URL", "danger")
-            return redirect(url_for('index'))
+            return render_template('index.html', messages=messages)
 
         id_returned, is_existed = dao.save(based_url)
         if is_existed:
