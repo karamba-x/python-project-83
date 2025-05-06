@@ -5,7 +5,7 @@
   <div class="col-12 col-md-10 col-lg-8 mx-auto border rounded-3 bg-light p-5">
     <h1 class="display-3">Анализатор страниц</h1>
     <p class="lead">Бесплатно проверяйте сайты на SEO-пригодность</p>
-    <form class="d-flex justify-content-center" method="post">
+    <form action="{{ url_for('post_url') }}" class="d-flex justify-content-center" method="post">
       <input class="form-control form-control-lg" type="text" name="url" required
              placeholder="https://www.example.com" aria-label="url">
       <input type="submit" class="btn btn-primary  btn-lg ms-3 px-5 text-uppercase mx-3" value="Проверить">

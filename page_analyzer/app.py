@@ -25,25 +25,9 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 dao = UrlDAO(DATABASE_URL)
 
 
-@app.route("/", methods=['GET', 'POST'])
+@app.get("/")
 def index():
     messages = get_flashed_messages(with_categories=True)
-    if request.method == 'POST':
-        url = request.form.get('url')
-
-        based_url = parse_url(url)
-
-        if not validators.url(based_url):
-            flash("Некорректный URL", "danger")
-            return render_template('index.html', messages=messages)
-
-        id_returned, is_existed = dao.save(based_url)
-        if is_existed:
-            flash("Страница уже существует", "info")
-        else:
-            flash("Страница успешно добавлена", "success")
-        return redirect(url_for('get_url', id=id_returned))
-
     return render_template('index.html', messages=messages)
 
 
@@ -61,6 +45,25 @@ def get_url(id):
 def get_url_list():
     list = dao.get_all()
     return render_template("list.html", list=list)
+
+
+@app.post("/urls")
+def post_url():
+    url = request.form.get('url')
+
+    based_url = parse_url(url)
+
+    if not validators.url(url):
+        flash("Некорректный URL", "danger")
+        return redirect(url_for('index'))
+
+    id_returned, is_existed = dao.save(based_url)
+
+    if is_existed:
+        flash("Страница уже существует", "info")
+    else:
+        flash("Страница успешно добавлена", "success")
+    return redirect(url_for('get_url', id=id_returned))
 
 
 @app.post("/urls/<int:id>/checks")
