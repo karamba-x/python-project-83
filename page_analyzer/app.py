@@ -1,6 +1,5 @@
 import os
 
-import psycopg2
 import requests
 import validators
 from bs4 import BeautifulSoup
@@ -14,7 +13,6 @@ from flask import (
     request,
     url_for,
 )
-from psycopg2.extras import DictCursor
 
 from page_analyzer.dao import UrlDAO
 from page_analyzer.utils import parse_url
@@ -24,8 +22,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-conn = psycopg2.connect(DATABASE_URL, cursor_factory=DictCursor)
-dao = UrlDAO(conn)
+dao = UrlDAO(DATABASE_URL)
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -89,3 +86,4 @@ def add_check_url(id):
         flash("Произошла ошибка при проверке", "danger")
 
     return redirect(url_for('get_url', id=id))
+
