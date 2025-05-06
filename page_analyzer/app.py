@@ -55,7 +55,8 @@ def post_url():
 
     if not validators.url(url):
         flash("Некорректный URL", "danger")
-        return redirect(url_for('index'))
+        messages = get_flashed_messages(with_categories=True)
+        return render_template("index.html", messages=messages), 422
 
     id_returned, is_existed = dao.save(based_url)
 
