@@ -38,7 +38,10 @@ def get_url(id):
     url_checks = dao.get_checks_by_url_id(id)
     if not row:
         return render_template("not_found.html")
-    return render_template("view.html", messages=messages, row=row, url_checks=url_checks)
+    return render_template("view.html",
+                           messages=messages,
+                           row=row,
+                           url_checks=url_checks)
 
 
 @app.get("/urls")
@@ -77,7 +80,8 @@ def add_check_url(id):
         soup = BeautifulSoup(res.text, "html.parser")
 
         meta_description = soup.find("meta", attrs={"name": "description"})
-        meta_description_content = meta_description.get("content") if meta_description else ""
+        meta_description_content = meta_description.get("content") \
+            if meta_description else ""
 
         h1_tag = soup.find("h1")
         h1_text = h1_tag.text if h1_tag else ""
@@ -85,7 +89,11 @@ def add_check_url(id):
         title_tag = soup.title
         title_text = title_tag.text if title_tag else ""
 
-        dao.create_url_check(id, res.status_code, h1_text, title_text, meta_description_content)
+        dao.create_url_check(id,
+                             res.status_code,
+                             h1_text,
+                             title_text,
+                             meta_description_content)
         flash("Страница успешно проверена", "success")
     except requests.exceptions.HTTPError:
         flash("Произошла ошибка при проверке", "danger")

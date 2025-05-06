@@ -18,7 +18,8 @@ class UrlDAO:
                 if row:
                     return row['id'], True
 
-                cur.execute("INSERT INTO urls (name) VALUES (%s) RETURNING id;", (url,))
+                cur.execute("INSERT INTO urls (name) VALUES (%s) RETURNING id;",
+                            (url,))
                 new_id = cur.fetchone()['id']
                 conn.commit()
                 return new_id, False
@@ -63,5 +64,7 @@ class UrlDAO:
     def get_checks_by_url_id(self, url_id):
         with self.get_connection() as conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                cur.execute("SELECT * FROM url_checks WHERE url_id=%s ORDER BY id DESC", (url_id,))
+                cur.execute(
+                    "SELECT * FROM url_checks WHERE url_id=%s ORDER BY id DESC",
+                            (url_id,))
                 return cur.fetchall()
